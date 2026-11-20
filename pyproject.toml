@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sql-grpo"
+version = "0.2.0"
+description = "Autonomous Text-to-SQL Generator Aligned via RLVR and GRPO"
+authors = [{ name = "AI Engineering Capstone" }]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.2.0",
+    "transformers>=4.48.0",
+    "datasets>=3.0.0",
+    "accelerate>=0.30.0",
+    "peft>=0.14.0",
+    "bitsandbytes>=0.45.0",
+    "sqlglot>=26.0.0",
+    "pydantic>=2.8.0",
+    "pydantic-settings>=2.4.0",
+    "pyyaml>=6.0",
+    "rich>=13.7.0",
+]
+
+[project.optional-dependencies]
+training = [
+    "trl>=0.15.0",
+    "wandb>=0.19.0",
+]
+serving = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.34.0",
+    "streamlit>=1.41.0",
+    "psutil>=6.0.0",
+]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
+    "ruff>=0.5.0",
+]
+
+[project.scripts]
+sql-grpo = "sql_grpo.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

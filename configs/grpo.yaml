@@ -1,0 +1,28 @@
+# Full GRPO Fine-Tuning Configuration
+model:
+  model_id: "Qwen/Qwen2.5-Coder-1.5B-Instruct"
+  sft_adapter_path: "./outputs/sft/run_001/best_adapter"
+  load_in_4bit: true
+  torch_dtype: "bfloat16"
+  max_seq_length: 2048
+  max_prompt_length: 1536
+  max_completion_length: 512
+
+grpo:
+  num_generations: 8
+  temperature: 0.8
+  learning_rate: 5.0e-6
+  beta: 0.04 # KL penalty
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 8 # 1 * 8 = 8 (divisible by num_generations=8)
+  max_steps: 300
+  warmup_ratio: 0.1
+  lr_scheduler_type: "cosine"
+  logging_steps: 5
+  save_steps: 50
+  eval_steps: 50
+  seed: 3407
+  output_dir: "./outputs/grpo/run_001"
+  report_to: "none"
+  remove_unused_columns: false
+  use_vllm: false # false for stable memory behavior on Kaggle GPU

@@ -1,0 +1,24 @@
+# GRPO Pilot Configuration (Smoke Test)
+model:
+  model_id: "Qwen/Qwen2.5-Coder-1.5B-Instruct"
+  sft_adapter_path: "./outputs/sft/run_001/best_adapter"
+  load_in_4bit: true
+  torch_dtype: "bfloat16"
+  max_seq_length: 1536
+  max_prompt_length: 1024
+  max_completion_length: 512
+
+grpo:
+  num_generations: 4
+  temperature: 0.8
+  learning_rate: 5.0e-6
+  beta: 0.04 # KL penalty
+  per_device_train_batch_size: 1
+  gradient_accumulation_steps: 4 # 1 * 4 = 4 (divisible by num_generations=4)
+  max_steps: 20
+  logging_steps: 2
+  save_steps: 10
+  seed: 3407
+  output_dir: "./outputs/grpo_pilot"
+  report_to: "none"
+  remove_unused_columns: false

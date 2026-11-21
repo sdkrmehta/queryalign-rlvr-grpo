@@ -1,0 +1,36 @@
+# SFT Training Configuration (Kaggle T4 / P100 compatible)
+model:
+  model_id: "Qwen/Qwen2.5-Coder-1.5B-Instruct"
+  load_in_4bit: true
+  torch_dtype: "bfloat16"
+  max_seq_length: 2048
+
+lora:
+  r: 16
+  lora_alpha: 16
+  lora_dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+training:
+  output_dir: "./outputs/sft/run_001"
+  num_train_epochs: 3
+  per_device_train_batch_size: 4
+  per_device_eval_batch_size: 4
+  gradient_accumulation_steps: 4
+  learning_rate: 2.0e-4
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  logging_steps: 10
+  save_strategy: "epoch"
+  eval_strategy: "epoch"
+  save_total_limit: 2
+  seed: 3407
+  report_to: "none" # Set to "wandb" if WANDB_API_KEY is configured

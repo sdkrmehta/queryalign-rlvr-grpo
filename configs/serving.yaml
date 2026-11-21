@@ -1,0 +1,17 @@
+# Serving Configuration (FastAPI + Streamlit)
+server:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 1
+  timeout_keep_alive: 60
+
+security:
+  max_question_length: 500
+  max_execution_timeout_ms: 2500
+  max_result_rows: 5000
+  max_payload_bytes: 1048576
+
+model:
+  base_model_id: "Qwen/Qwen2.5-Coder-1.5B-Instruct"
+  default_adapter: "./outputs/grpo/run_001/final_adapter"
+  device: "cuda" # fallback to "cpu" if cuda unavailable

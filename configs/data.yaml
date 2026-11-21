@@ -1,0 +1,32 @@
+# Data Pipeline Configuration
+data_root: "./data"
+raw_dir: "./data/raw"
+processed_dir: "./data/processed"
+fixtures_dir: "./data/fixtures"
+
+datasets:
+  spider:
+    name: "spider"
+    source_url: "https://huggingface.co/datasets/GuokLIU/db-upload/resolve/main/spider.zip"
+    fallback_mirrors:
+      - "https://huggingface.co/datasets/zmmjjkk/SqurveBridge-benchmarks/resolve/main/spider.zip"
+    train_file: "train_spider.json"
+    dev_file: "dev.json"
+    tables_file: "tables.json"
+    db_dir: "database"
+  bird_mini_dev:
+    name: "bird_mini_dev"
+    source_url: "https://github.com/bird-bench/mini_dev"
+    split: "mini_dev_sqlite"
+    select_only: true
+
+preprocessing:
+  gold_timeout_seconds: 1.0
+  max_sample_values_per_column: 3
+  max_sample_value_chars: 50
+  max_prompt_tokens: 1536
+  disjoint_db_split: true
+  split_seed: 3407
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1

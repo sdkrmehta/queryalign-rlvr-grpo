@@ -1,0 +1,44 @@
+{
+  "eval_mode": "first_50",
+  "n_examples": 50,
+  "adapter_path": "/kaggle/working/outputs/grpo/final_adapter",
+  "adapter_sha256": "9EF9C5326FC68CE4D9D602392F3DE107877C2C8083BC77A74D3B68799409ECF3",
+  "percentile_method": "linear (NumPy default, Hyndman & Fan Type 7)",
+  "greedy": {
+    "execution_accuracy_pct": 66.0,
+    "sql_validity_pct": 78.0,
+    "exec_success_pct": 78.0,
+    "p50_latency_ms": 3566.965,
+    "p95_latency_ms": 7420.241
+  },
+  "majority8": {
+    "execution_accuracy_pct": 80.0,
+    "delta_vs_greedy_pts": 14.0,
+    "sql_validity_pct": 96.0,
+    "exec_success_pct": 96.0,
+    "p50_latency_ms": 7867.332,
+    "p95_latency_ms": 14295.827,
+    "decision_status": {
+      "CONSENSUS_ELECTED": {
+        "count": 41,
+        "pct": 82.0,
+        "accuracy": 90.24
+      },
+      "LOW_CONFIDENCE": {
+        "count": 6,
+        "pct": 12.0,
+        "accuracy": 50.0
+      },
+      "NO_CONSENSUS_TIE": {
+        "count": 1,
+        "pct": 2.0,
+        "accuracy": 0.0
+      },
+      "ALL_FAILED": {
+        "count": 2,
+        "pct": 4.0,
+        "accuracy": 0.0
+      }
+    }
+  }
+}

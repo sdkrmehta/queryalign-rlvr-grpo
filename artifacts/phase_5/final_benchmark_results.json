@@ -1,0 +1,352 @@
+[
+  {
+    "id": "dev_000000",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 3170.4923709999093
+  },
+  {
+    "id": "dev_000001",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 1367.9708150000351
+  },
+  {
+    "id": "dev_000002",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2304.1890969999486
+  },
+  {
+    "id": "dev_000003",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2277.9176929999494
+  },
+  {
+    "id": "dev_000004",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 3241.847385999904
+  },
+  {
+    "id": "dev_000005",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 3179.7506670000075
+  },
+  {
+    "id": "dev_000006",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "LOW_CONFIDENCE",
+    "greedy_latency_ms": 5132.866189000083
+  },
+  {
+    "id": "dev_000007",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "NO_CONSENSUS_TIE",
+    "greedy_latency_ms": 5486.152094999966
+  },
+  {
+    "id": "dev_000008",
+    "greedy_correct": false,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 4870.480251000004
+  },
+  {
+    "id": "dev_000009",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2212.8303079999796
+  },
+  {
+    "id": "dev_000010",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2009.8095900000317
+  },
+  {
+    "id": "dev_000011",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 1961.0451259999309
+  },
+  {
+    "id": "dev_000012",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "NO_CONSENSUS_TIE",
+    "greedy_latency_ms": 5540.879607000079
+  },
+  {
+    "id": "dev_000013",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "LOW_CONFIDENCE",
+    "greedy_latency_ms": 5551.237345000004
+  },
+  {
+    "id": "dev_000014",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 3137.737203000029
+  },
+  {
+    "id": "dev_000015",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 3140.1270850000174
+  },
+  {
+    "id": "dev_000016",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2251.060974999973
+  },
+  {
+    "id": "dev_000017",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2202.933599000062
+  },
+  {
+    "id": "dev_000018",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2305.9999860000744
+  },
+  {
+    "id": "dev_000019",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "NO_CONSENSUS_TIE",
+    "greedy_latency_ms": 2332.60735500005
+  },
+  {
+    "id": "dev_000020",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 3602.0742650000557
+  },
+  {
+    "id": "dev_000021",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 3422.200906999933
+  },
+  {
+    "id": "dev_000022",
+    "greedy_correct": false,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 4969.557277999911
+  },
+  {
+    "id": "dev_000023",
+    "greedy_correct": true,
+    "majority8_correct": false,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 4935.831613999881
+  },
+  {
+    "id": "dev_000024",
+    "greedy_correct": true,
+    "majority8_correct": false,
+    "majority8_status": "NO_CONSENSUS_TIE",
+    "greedy_latency_ms": 6995.85867199994
+  },
+  {
+    "id": "dev_000025",
+    "greedy_correct": false,
+    "majority8_correct": true,
+    "majority8_status": "LOW_CONFIDENCE",
+    "greedy_latency_ms": 7054.076985000165
+  },
+  {
+    "id": "dev_000026",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2605.246268000201
+  },
+  {
+    "id": "dev_000027",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2446.8733950000114
+  },
+  {
+    "id": "dev_000028",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2394.9709200001053
+  },
+  {
+    "id": "dev_000029",
+    "greedy_correct": true,
+    "majority8_correct": false,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2417.3771370001305
+  },
+  {
+    "id": "dev_000030",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 3672.3312379999697
+  },
+  {
+    "id": "dev_000031",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 5557.721694999827
+  },
+  {
+    "id": "dev_000032",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 3472.7616150000813
+  },
+  {
+    "id": "dev_000033",
+    "greedy_correct": false,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 5784.228637999831
+  },
+  {
+    "id": "dev_000034",
+    "greedy_correct": false,
+    "majority8_correct": true,
+    "majority8_status": "NO_CONSENSUS_TIE",
+    "greedy_latency_ms": 5928.182163999963
+  },
+  {
+    "id": "dev_000035",
+    "greedy_correct": false,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 5162.027839000075
+  },
+  {
+    "id": "dev_000036",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 5208.403296999904
+  },
+  {
+    "id": "dev_000037",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 7236.846452999998
+  },
+  {
+    "id": "dev_000038",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 7352.261623999993
+  },
+  {
+    "id": "dev_000039",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "ALL_FAILED",
+    "greedy_latency_ms": 5150.251636999883
+  },
+  {
+    "id": "dev_000040",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "ALL_FAILED",
+    "greedy_latency_ms": 3947.8142899999966
+  },
+  {
+    "id": "dev_000041",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "LOW_CONFIDENCE",
+    "greedy_latency_ms": 10487.00074999988
+  },
+  {
+    "id": "dev_000042",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "NO_CONSENSUS_TIE",
+    "greedy_latency_ms": 10564.89159900002
+  },
+  {
+    "id": "dev_000043",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2481.976747999852
+  },
+  {
+    "id": "dev_000044",
+    "greedy_correct": false,
+    "majority8_correct": false,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 4624.500375000025
+  },
+  {
+    "id": "dev_000045",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2195.640395999817
+  },
+  {
+    "id": "dev_000046",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2125.264389999984
+  },
+  {
+    "id": "dev_000047",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 4735.086538999894
+  },
+  {
+    "id": "dev_000048",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2239.744470000005
+  },
+  {
+    "id": "dev_000049",
+    "greedy_correct": true,
+    "majority8_correct": true,
+    "majority8_status": "CONSENSUS_ELECTED",
+    "greedy_latency_ms": 2258.450446999859
+  }
+]

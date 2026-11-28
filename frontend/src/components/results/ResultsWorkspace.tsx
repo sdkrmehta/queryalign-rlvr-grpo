@@ -435,7 +435,7 @@ export const ResultsWorkspace: React.FC<ResultsWorkspaceProps> = ({
                   Verifiable Reward Stack (GRPO Multi-Tier Alignment)
                 </h4>
                 <p style={{ fontSize: '12px', color: 'var(--qa-text-muted)' }}>
-                  The model was aligned via Group Relative Policy Optimization (GRPO, G=8) using 4 rule-based, deterministic rewards:
+                  The model was aligned via Group Relative Policy Optimization (GRPO, G=8) using 4 active rule-based NB3 rewards (plus a correctness-gated package efficiency term):
                 </p>
               </div>
 

@@ -177,6 +177,10 @@ export const ModelInfoPage: React.FC = () => {
               <div style={{ fontWeight: 700, color: 'var(--qa-accent)', fontFamily: 'var(--qa-font-mono)' }}>R_result &isin; [0.00, +1.00]</div>
               <div style={{ fontSize: '11px', color: 'var(--qa-text-muted)' }}>Multiset tuple hash equality against verified ground-truth.</div>
             </div>
+            <div style={{ padding: '8px', backgroundColor: 'var(--qa-bg-elevated)', borderRadius: '4px', border: '1px solid var(--qa-border)' }}>
+              <div style={{ fontWeight: 700, color: 'var(--qa-accent)', fontFamily: 'var(--qa-font-mono)' }}>R_eff &isin; [0.00, +0.30] (Package Composite Only)</div>
+              <div style={{ fontSize: '11px', color: 'var(--qa-text-muted)' }}>Correctness-gated latency efficiency bonus in composite reward (inactive in NB3 4-reward run).</div>
+            </div>
           </div>
         </div>
 

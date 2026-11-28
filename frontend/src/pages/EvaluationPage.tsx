@@ -50,7 +50,7 @@ export const EvaluationPage: React.FC = () => {
             <div>
               <h1 style={{ fontSize: '20px', fontWeight: 800 }}>Spider 1.0 Benchmark & Evaluation Report</h1>
               <p style={{ fontSize: '12px', color: 'var(--qa-text-muted)' }}>
-                Audited validation dataset evaluation ({summary.nExamples} held-out cross-domain database pairs).
+                Audited {summary.evalMode} evaluation slice ({summary.nExamples} examples across {summary.evalDatabasesNote}).
               </p>
             </div>
           </div>
@@ -94,7 +94,7 @@ export const EvaluationPage: React.FC = () => {
             {summary.greedy.executionAccuracyPct.toFixed(1)}%
           </div>
           <div style={{ fontSize: '11px', color: 'var(--qa-success)', marginTop: '4px', fontWeight: 600 }}>
-            +11.0% vs Zero-Shot Baseline
+            +{summary.matched100Slice.deltaPts.toFixed(1)} pp vs Zero-Shot on matched N={summary.matched100Slice.nExamples} slice ({summary.matched100Slice.grpoGreedyExPct.toFixed(1)}% vs {summary.matched100Slice.zeroShotExPct.toFixed(1)}%)
           </div>
           <div style={{ fontSize: '11px', color: 'var(--qa-text-muted)', marginTop: '2px' }}>
             P50 Latency: {summary.greedy.p50LatencyMs.toFixed(0)} ms
@@ -170,7 +170,7 @@ export const EvaluationPage: React.FC = () => {
             0 Sandbox DDL / DML Violations
           </div>
           <div style={{ fontSize: '11px', color: 'var(--qa-text-muted)', marginTop: '2px' }}>
-            100% Tag Enclosure Grounding
+            Greedy Valid SQL: {summary.greedy.sqlValidityPct.toFixed(1)}% &rarr; Maj@8: {summary.majority8.sqlValidityPct.toFixed(1)}%
           </div>
         </div>
       </div>
@@ -222,27 +222,31 @@ export const EvaluationPage: React.FC = () => {
                   </td>
                   <td>
                     <div style={{ fontWeight: 600, fontSize: '13px' }}>{stage.name}</div>
-                    <div style={{ fontSize: '11px', color: 'var(--qa-text-muted)' }}>{stage.model}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--qa-text-muted)' }}>
+                      {stage.model} &bull; {stage.sampleScope}
+                    </div>
                   </td>
                   <td style={{ textAlign: 'right', fontWeight: 800, fontFamily: 'var(--qa-font-mono)' }}>
                     <span
                       style={{
                         color:
-                          stage.executionAccuracy >= 80
+                          stage.executionAccuracy === null
+                            ? 'var(--qa-text-muted)'
+                            : stage.executionAccuracy >= 80
                             ? 'var(--qa-success)'
                             : stage.executionAccuracy >= 65
                             ? 'var(--qa-accent)'
                             : 'var(--qa-text-primary)',
                       }}
                     >
-                      {stage.executionAccuracy.toFixed(1)}%
+                      {stage.executionAccuracy !== null ? `${stage.executionAccuracy.toFixed(1)}%` : 'N/A'}
                     </span>
                   </td>
                   <td style={{ textAlign: 'right', fontFamily: 'var(--qa-font-mono)', fontSize: '12px' }}>
-                    {stage.sqlValidity.toFixed(1)}%
+                    {stage.sqlValidity !== null ? `${stage.sqlValidity.toFixed(1)}%` : 'N/A'}
                   </td>
                   <td style={{ textAlign: 'right', fontFamily: 'var(--qa-font-mono)', fontSize: '12px' }}>
-                    {stage.executionSuccess.toFixed(1)}%
+                    {stage.executionSuccess !== null ? `${stage.executionSuccess.toFixed(1)}%` : 'N/A'}
                   </td>
                   <td style={{ fontSize: '12px', color: 'var(--qa-text-secondary)' }}>
                     {stage.keyMilestone}

@@ -111,10 +111,17 @@ export const WorkspacePage: React.FC<WorkspacePageProps> = ({
                       fontSize: '12px',
                       fontWeight: 800,
                       fontFamily: 'var(--qa-font-mono)',
-                      color: stage.executionAccuracy >= 80 ? 'var(--qa-success)' : stage.executionAccuracy >= 65 ? 'var(--qa-accent)' : 'var(--qa-text-secondary)',
+                      color:
+                        stage.executionAccuracy === null
+                          ? 'var(--qa-text-muted)'
+                          : stage.executionAccuracy >= 80
+                          ? 'var(--qa-success)'
+                          : stage.executionAccuracy >= 65
+                          ? 'var(--qa-accent)'
+                          : 'var(--qa-text-secondary)',
                     }}
                   >
-                    {stage.executionAccuracy.toFixed(1)}% EX
+                    {stage.executionAccuracy !== null ? `${stage.executionAccuracy.toFixed(1)}% EX` : 'N/A'}
                   </span>
                 </div>
                 <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--qa-text-primary)' }}>

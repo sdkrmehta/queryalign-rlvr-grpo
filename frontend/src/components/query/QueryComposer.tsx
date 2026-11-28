@@ -110,7 +110,7 @@ export const QueryComposer: React.FC<QueryComposerProps> = ({
                 backgroundColor: mode === 'greedy' ? 'var(--qa-accent)' : 'transparent',
                 color: mode === 'greedy' ? '#FFFFFF' : 'var(--qa-text-secondary)',
               }}
-              title="Deterministic Pass@1 Greedy Decoding (66.0% EX)"
+              title="Deterministic Pass@1 Greedy Decoding (66.0% EX on first_50)"
             >
               Greedy Pass@1
             </button>
@@ -124,7 +124,7 @@ export const QueryComposer: React.FC<QueryComposerProps> = ({
                 backgroundColor: mode === 'majority8' ? 'var(--qa-accent)' : 'transparent',
                 color: mode === 'majority8' ? '#FFFFFF' : 'var(--qa-text-secondary)',
               }}
-              title="Majority@8 Plurality Voting Consensus (80.0% EX, +14.0% test-time compute)"
+              title="Majority@8 Plurality Voting Consensus (80.0% EX, +14.0 pp over Greedy on first_50)"
             >
               Majority@8 (Consensus)
             </button>

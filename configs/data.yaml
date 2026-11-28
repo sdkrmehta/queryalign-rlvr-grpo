@@ -10,6 +10,7 @@ datasets:
     source_url: "https://huggingface.co/datasets/GuokLIU/db-upload/resolve/main/spider.zip"
     fallback_mirrors:
       - "https://huggingface.co/datasets/zmmjjkk/SqurveBridge-benchmarks/resolve/main/spider.zip"
+    sha256: "5DDFF97BB1D421282C593E8D30CE0CE107270F4DD4A21D60EBA4BF287D5956B1"
     train_file: "train_spider.json"
     dev_file: "dev.json"
     tables_file: "tables.json"
@@ -19,6 +20,7 @@ datasets:
     source_url: "https://github.com/bird-bench/mini_dev"
     split: "mini_dev_sqlite"
     select_only: true
+    status: "optional_not_ingested"
 
 preprocessing:
   gold_timeout_seconds: 1.0

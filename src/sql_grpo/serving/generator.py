@@ -110,6 +110,7 @@ class SQLGenerator:
         model_choice: str = "SFT + GRPO (RLVR)",
         inference_mode: str = "Greedy (Pass@1)",
         execute: bool = True,
+        num_candidates: Optional[int] = None,
     ) -> GenerationResult:
         """Generate SQL via local open-weight LLM, validate AST, and execute in sandbox."""
         total_start = time.perf_counter()
@@ -120,12 +121,14 @@ class SQLGenerator:
         schema_text = self.serializer.to_compact_text(schema_info)
         prompt_messages = build_chat_prompt(question=question, serialized_schema=schema_text)
 
-        is_majority = "Majority@8" in inference_mode
-        num_candidates = self.config.num_candidates if is_majority else 1
+        resolved_candidates = num_candidates if num_candidates is not None else (
+            self.config.num_candidates if "Majority@8" in inference_mode else 1
+        )
+        is_majority = resolved_candidates > 1
 
         inf_out = self.inference_backend.generate(
             prompt_messages=prompt_messages,
-            num_candidates=num_candidates,
+            num_candidates=resolved_candidates,
             model_choice=model_choice,
         )
         gen_ms = inf_out.generation_latency_ms

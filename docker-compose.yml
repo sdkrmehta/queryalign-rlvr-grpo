@@ -8,10 +8,14 @@ services:
       - "8000:8000"
     volumes:
       - ./data:/app/data:ro
-      - ./outputs:/app/outputs:ro
+      - ./artifacts:/app/artifacts:ro
+      - hf_cache:/app/.cache/huggingface
     restart: unless-stopped
     environment:
       - LOG_LEVEL=INFO
+      - HF_HOME=/app/.cache/huggingface
+      - GRPO_ADAPTER_PATH=/app/artifacts/phase_4/grpo/final_adapter
+      - SFT_ADAPTER_PATH=/app/artifacts/phase_2&3/outputs/sft/best_adapter
 
   dashboard:
     build:
@@ -27,3 +31,6 @@ services:
     restart: unless-stopped
     environment:
       - API_URL=http://api:8000
+
+volumes:
+  hf_cache:

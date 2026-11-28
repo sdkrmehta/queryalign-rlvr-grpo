@@ -1,33 +1,54 @@
-"""Schema & AST Reward (R_ast): Scores syntactic validity and schema compliance."""
+"""Schema & AST Reward (R_ast): Scores syntactic validity and schema allowlist compliance."""
 
-from typing import Any, List, Optional, Set, Union
-from sql_grpo.safety.ast_policy import ASTPolicyChecker
-from sql_grpo.safety.sql_parser import SQLCompletionParser
+from typing import Any, Dict, List, Mapping, Optional, Set, Tuple, Union
+
+from sql_grpo.rewards.common import (
+    NormalizedCandidate,
+    normalize_and_validate_candidate,
+    resolve_columns_arg,
+    resolve_tables_arg,
+)
 
 
-def compute_schema_reward(completion: str, valid_tables: Optional[Set[str]] = None) -> float:
+def compute_schema_reward(
+    completion: Any,
+    valid_tables: Optional[Set[str]] = None,
+    valid_columns: Optional[Union[Set[str], Mapping[str, Set[str]]]] = None,
+) -> float:
     """Computes AST / Schema reward for a single completion.
 
     Returns:
-        +0.20 if valid SELECT-family AST with authorized tables.
+        +0.20 if format valid and AST conforms to SELECT-only table/column/function allowlists.
         0.00 otherwise.
     """
-    parsed = SQLCompletionParser.parse(completion)
-    if not parsed.is_valid_format or not parsed.sql:
-        return 0.00
-
-    checker = ASTPolicyChecker(allowed_tables=valid_tables)
-    ast_res = checker.validate(parsed.sql)
-    if ast_res.is_safe:
+    cand = normalize_and_validate_candidate(
+        completion=completion,
+        valid_tables=valid_tables,
+        valid_columns=valid_columns,
+    )
+    if cand.is_format_valid and cand.is_ast_safe:
         return 0.20
     return 0.00
 
 
-def schema_reward_func(completions: List[Union[str, dict]], valid_tables: Optional[List[Any]] = None, **kwargs) -> List[float]:
+def schema_reward_func(
+    completions: List[Any],
+    valid_tables: Optional[List[Any]] = None,
+    valid_columns: Optional[List[Any]] = None,
+    valid_columns_json: Optional[List[Any]] = None,
+    **kwargs,
+) -> List[float]:
     """TRL-compatible reward callable for AST & schema compliance."""
+    cache: Dict[Tuple[str, Any, Any], NormalizedCandidate] = {}
     rewards: List[float] = []
     for idx, comp in enumerate(completions):
-        text = comp["content"] if isinstance(comp, dict) else str(comp)
-        tables = set(valid_tables[idx]) if (valid_tables and idx < len(valid_tables) and valid_tables[idx]) else None
-        rewards.append(compute_schema_reward(text, valid_tables=tables))
+        tables = resolve_tables_arg(valid_tables, idx)
+        cols = resolve_columns_arg(valid_columns, valid_columns_json, idx)
+        cand = normalize_and_validate_candidate(
+            completion=comp,
+            valid_tables=tables,
+            valid_columns=cols,
+            cache=cache,
+        )
+        rewards.append(0.20 if (cand.is_format_valid and cand.is_ast_safe) else 0.00)
     return rewards

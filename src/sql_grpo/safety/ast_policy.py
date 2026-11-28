@@ -451,6 +451,15 @@ class ASTPolicyChecker:
                     error_message="Recursive CTEs are disallowed by sandbox policy",
                 )
 
+        # Require at least one projected expression in every SELECT clause
+        for sel in ast.find_all(exp.Select):
+            if not sel.expressions:
+                return ASTValidationResult(
+                    is_safe=False,
+                    error_code="PARSE_ERROR",
+                    error_message="SELECT clause contains no projection expressions",
+                )
+
         # 4. Default-deny AST node and SQL function allowlist inspection
         for node in ast.walk():
             if isinstance(node, exp.Anonymous):

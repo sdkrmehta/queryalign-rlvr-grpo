@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from sql_grpo.env.result_normalizer import _canonical_row
+from sql_grpo.env.result_normalizer import canonical_multiset_digest, compare_results
 from sql_grpo.env.sqlite_sandbox import ExecutionResult, SQLiteSandbox
 from sql_grpo.safety.ast_policy import ASTPolicyChecker
 from sql_grpo.safety.sql_parser import SQLCompletionParser
@@ -73,7 +73,9 @@ class MajorityVotingEngine:
 
         checker = ASTPolicyChecker(allowed_tables=valid_tables, allowed_columns=valid_columns)
         evaluations: List[CandidateEvaluation] = []
-        clusters: Dict[Tuple[Any, ...], List[Tuple[CandidateEvaluation, ExecutionResult]]] = defaultdict(list)
+        # Key clusters by deterministic SHA-256 multiset digest, and verify exact canonical equality
+        # before inserting into a bucket so hash collisions can never merge distinct results.
+        clusters: Dict[str, List[Tuple[CandidateEvaluation, ExecutionResult]]] = defaultdict(list)
         safe_count = 0
         executed_count = 0
 
@@ -132,8 +134,16 @@ class MajorityVotingEngine:
             if exec_ok:
                 executed_count += 1
                 rows = exec_res.rows or []
-                sig = tuple(sorted((_canonical_row(r) for r in rows), key=repr))
-                clusters[sig].append((ev, exec_res))
+                digest = canonical_multiset_digest(rows, ordered=False)
+                bucket_key = digest
+                suffix = 0
+                while bucket_key in clusters:
+                    rep_rows = clusters[bucket_key][0][1].rows or []
+                    if compare_results(candidate_rows=rows, gold_rows=rep_rows, ordered=False):
+                        break
+                    suffix += 1
+                    bucket_key = f"{digest}:{suffix}"
+                clusters[bucket_key].append((ev, exec_res))
 
         if not clusters:
             return VotingOutcome(

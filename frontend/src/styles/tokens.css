@@ -1,0 +1,126 @@
+/* ==========================================================================
+   QueryAlign Design Tokens — Enterprise Developer Tool System
+   Inspired by AI2SQL, SQLAI, Text2SQL.ai, Chat2DB, BlazeSQL
+   ========================================================================== */
+
+:root,
+[data-theme='dark'] {
+  /* Surface Colors */
+  --qa-bg-app: #0B0F14;
+  --qa-bg-sidebar: #10151D;
+  --qa-bg-card: #141C27;
+  --qa-bg-elevated: #1B2532;
+  --qa-bg-input: #101722;
+  --qa-bg-subtle: #182230;
+
+  /* Border Colors */
+  --qa-border: #293545;
+  --qa-border-subtle: #1F2A38;
+  --qa-border-focus: #8196FF;
+
+  /* Accent Colors */
+  --qa-accent: #8196FF;
+  --qa-accent-hover: #96A8FF;
+  --qa-accent-subtle: rgba(129, 150, 255, 0.12);
+  --qa-accent-glow: rgba(129, 150, 255, 0.25);
+
+  /* Status Colors */
+  --qa-success: #32C995;
+  --qa-success-bg: rgba(50, 201, 149, 0.12);
+  --qa-success-border: rgba(50, 201, 149, 0.3);
+
+  --qa-warning: #F0B95A;
+  --qa-warning-bg: rgba(240, 185, 90, 0.12);
+  --qa-warning-border: rgba(240, 185, 90, 0.3);
+
+  --qa-error: #F07883;
+  --qa-error-bg: rgba(240, 120, 131, 0.12);
+  --qa-error-border: rgba(240, 120, 131, 0.3);
+
+  /* Text Colors */
+  --qa-text-primary: #F1F4FA;
+  --qa-text-secondary: #9AA7B8;
+  --qa-text-muted: #6B7B91;
+
+  /* Code Syntax Colors */
+  --qa-code-keyword: #8196FF;
+  --qa-code-function: #32C995;
+  --qa-code-string: #F0B95A;
+  --qa-code-number: #FF9E64;
+  --qa-code-comment: #6B7B91;
+  --qa-code-ident: #F1F4FA;
+
+  /* Shadows */
+  --qa-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --qa-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --qa-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme='light'] {
+  /* Surface Colors */
+  --qa-bg-app: #F8FAFC;
+  --qa-bg-sidebar: #FFFFFF;
+  --qa-bg-card: #FFFFFF;
+  --qa-bg-elevated: #F1F5F9;
+  --qa-bg-input: #FFFFFF;
+  --qa-bg-subtle: #F8FAFC;
+
+  /* Border Colors */
+  --qa-border: #E2E8F0;
+  --qa-border-subtle: #EDF2F7;
+  --qa-border-focus: #4F46E5;
+
+  /* Accent Colors */
+  --qa-accent: #4F46E5;
+  --qa-accent-hover: #4338CA;
+  --qa-accent-subtle: rgba(79, 70, 229, 0.08);
+  --qa-accent-glow: rgba(79, 70, 229, 0.2);
+
+  /* Status Colors */
+  --qa-success: #059669;
+  --qa-success-bg: rgba(5, 150, 105, 0.08);
+  --qa-success-border: rgba(5, 150, 105, 0.25);
+
+  --qa-warning: #D97706;
+  --qa-warning-bg: rgba(217, 119, 6, 0.08);
+  --qa-warning-border: rgba(217, 119, 6, 0.25);
+
+  --qa-error: #DC2626;
+  --qa-error-bg: rgba(220, 38, 38, 0.08);
+  --qa-error-border: rgba(220, 38, 38, 0.25);
+
+  /* Text Colors */
+  --qa-text-primary: #0F172A;
+  --qa-text-secondary: #475569;
+  --qa-text-muted: #94A3B8;
+
+  /* Code Syntax Colors */
+  --qa-code-keyword: #4F46E5;
+  --qa-code-function: #059669;
+  --qa-code-string: #B45309;
+  --qa-code-number: #EA580C;
+  --qa-code-comment: #94A3B8;
+  --qa-code-ident: #0F172A;
+
+  /* Shadows */
+  --qa-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --qa-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --qa-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+:root {
+  /* Typography */
+  --qa-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --qa-font-mono: 'JetBrains Mono', 'SF Mono', Consolas, 'Courier New', monospace;
+
+  /* Radii */
+  --qa-radius-sm: 6px;
+  --qa-radius-md: 10px;
+  --qa-radius-lg: 14px;
+  --qa-radius-full: 9999px;
+
+  /* Layout Standard Dimensions */
+  --qa-sidebar-width: 260px;
+  --qa-sidebar-collapsed-width: 68px;
+  --qa-header-height: 60px;
+}

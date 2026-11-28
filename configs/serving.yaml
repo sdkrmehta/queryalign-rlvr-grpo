@@ -13,5 +13,17 @@ security:
 
 model:
   base_model_id: "Qwen/Qwen2.5-Coder-1.5B-Instruct"
-  default_adapter: "./outputs/grpo/run_001/final_adapter"
-  device: "cuda" # fallback to "cpu" if cuda unavailable
+  revision: "main"
+  default_adapter: "./artifacts/phase_4/grpo/final_adapter"
+  sft_adapter: "./artifacts/phase_2&3/outputs/sft/best_adapter"
+  device: "auto" # "auto", "cuda", or "cpu"
+  load_in_4bit: true # used when CUDA + bitsandbytes are available
+  lazy_load: true
+
+generation:
+  max_prompt_tokens: 1536
+  max_new_tokens: 256
+  sampling_temperature: 0.8
+  sampling_top_p: 0.95
+  num_candidates: 8
+  min_plurality_threshold: 3

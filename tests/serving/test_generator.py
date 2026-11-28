@@ -1,162 +1,182 @@
-"""Tests for SQLGenerator, Dynamic Introspection, and Serving Pipeline."""
+"""Tests for SQLGenerator, Local Inference Integration, AST Safety, and Majority@8 Voting."""
 
-import pytest
 from pathlib import Path
+from typing import Any, Dict, List, Optional
+import pytest
 
 from sql_grpo.env.db_registry import DatabaseRegistry
 from sql_grpo.env.sqlite_sandbox import SQLiteSandbox
 from sql_grpo.serving.generator import SQLGenerator
+from sql_grpo.serving.inference import InferenceOutput
 
 
-@pytest.fixture
-def generator():
+class StubInferenceBackend:
+    """Deterministic local-inference test double returning preconfigured completions."""
+
+    def __init__(self, completions_by_mode: Optional[Dict[int, List[str]]] = None):
+        self.completions_by_mode = completions_by_mode or {
+            1: ["<sql>SELECT name FROM employee</sql>"],
+            8: ["<sql>SELECT name FROM employee</sql>"] * 8,
+        }
+        self.calls: List[Dict[str, Any]] = []
+
+    def is_ready(self) -> bool:
+        return True
+
+    def status(self) -> Dict[str, Any]:
+        return {"loaded": True, "base_model_id": "stub"}
+
+    def generate(
+        self,
+        prompt_messages: List[Dict[str, str]],
+        num_candidates: int = 1,
+        model_choice: str = "SFT + GRPO (RLVR)",
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        max_new_tokens: Optional[int] = None,
+    ) -> InferenceOutput:
+        self.calls.append(
+            {
+                "prompt_messages": prompt_messages,
+                "num_candidates": num_candidates,
+                "model_choice": model_choice,
+            }
+        )
+        comps = self.completions_by_mode.get(num_candidates) or self.completions_by_mode[1]
+        return InferenceOutput(
+            completions=list(comps[:num_candidates]),
+            generation_latency_ms=12.5,
+            model_choice=model_choice,
+            base_model_id="Qwen/Qwen2.5-Coder-1.5B-Instruct",
+            adapter_sha256="9EF9C5326FC68CE4D9D602392F3DE107877C2C8083BC77A74D3B68799409ECF3",
+        )
+
+
+def _make_generator(completions_by_mode: Optional[Dict[int, List[str]]] = None):
     data_dir = Path(__file__).resolve().parents[2] / "data"
     registry = DatabaseRegistry(data_root=data_dir)
     sandbox = SQLiteSandbox()
-    return SQLGenerator(registry=registry, sandbox=sandbox)
+    stub = StubInferenceBackend(completions_by_mode=completions_by_mode)
+    return SQLGenerator(registry=registry, sandbox=sandbox, inference_backend=stub), stub
 
 
-def test_registry_list_databases(generator):
-    dbs = generator.registry.list_available_databases()
+def test_registry_list_databases():
+    gen, _ = _make_generator()
+    dbs = gen.registry.list_available_databases()
     assert "test_company" in dbs
     assert "concert_singer" in dbs
     assert len(dbs) > 10
 
 
-def test_question_change_changes_sql_and_results(generator):
-    # Query 1: list employee name
-    r1 = generator.execute_and_evaluate(
-        question="list employee name",
-        database_id="test_company",
-        model_choice="QLoRA SFT Baseline",
-        inference_mode="Greedy (Pass@1)",
+def test_generator_uses_inference_backend_not_manifest_replay():
+    # Ask a real Spider dev_manifest question, verify stub backend output is used (no gold_sql replay)
+    gen, stub = _make_generator(
+        {1: ["<sql>SELECT name FROM singer LIMIT 2</sql>"]}
     )
-    assert r1.format_valid is True
-    assert r1.ast_safe is True
-    assert "employee" in r1.selected_sql.lower()
-    assert r1.rows == [("Alice",), ("Bob",), ("Charlie",), ("David",), ("Eve",)]
-
-    # Query 2: list departments with budget > 200000
-    r2 = generator.execute_and_evaluate(
-        question="List all departments with a budget greater than 200,000.",
-        database_id="test_company",
-        model_choice="QLoRA SFT Baseline",
-        inference_mode="Greedy (Pass@1)",
-    )
-    assert r2.format_valid is True
-    assert r2.ast_safe is True
-    assert "department" in r2.selected_sql.lower()
-    assert "budget" in r2.selected_sql.lower()
-    # Results must differ from Query 1
-    assert r1.selected_sql != r2.selected_sql
-    assert r1.rows != r2.rows
-
-
-def test_target_database_change(generator):
-    # Query on test_company
-    r_company = generator.execute_and_evaluate(
-        question="list employee name",
-        database_id="test_company",
-        model_choice="QLoRA SFT Baseline",
-        inference_mode="Greedy (Pass@1)",
-    )
-    # Query on concert_singer
-    r_singer = generator.execute_and_evaluate(
+    res = gen.execute_and_evaluate(
         question="How many singers do we have?",
         database_id="concert_singer",
-        model_choice="QLoRA SFT Baseline",
-        inference_mode="Greedy (Pass@1)",
-    )
-    assert r_company.database_id == "test_company"
-    assert r_singer.database_id == "concert_singer"
-    assert r_singer.rows == [(6,)]
-    assert r_company.selected_sql != r_singer.selected_sql
-
-
-def test_inference_mode_majority8_vs_greedy(generator):
-    r_greedy = generator.execute_and_evaluate(
-        question="list employee name",
-        database_id="test_company",
         model_choice="SFT + GRPO (RLVR)",
         inference_mode="Greedy (Pass@1)",
     )
-    assert r_greedy.voting_outcome is None
-    assert len(r_greedy.candidates) == 0
+    assert len(stub.calls) == 1
+    user_msg = stub.calls[0]["prompt_messages"][1]["content"]
+    assert "DATABASE SCHEMA:" in user_msg
+    assert "Table: singer" in user_msg
+    assert "How many singers do we have?" in user_msg
+    assert res.selected_sql == "SELECT name FROM singer LIMIT 2"
+    assert res.format_valid is True
+    assert res.ast_safe is True
+    assert res.execution_result is not None and res.execution_result.success is True
+    assert len(res.rows) == 2
+    assert res.rewards is None  # Live serving has no ground truth gold_rows
 
-    r_maj8 = generator.execute_and_evaluate(
+
+def test_ast_unsafe_model_output_is_never_executed():
+    gen, _ = _make_generator(
+        {1: ["<sql>DROP TABLE employee;</sql>"]}
+    )
+    res = gen.execute_and_evaluate(
+        question="delete employees",
+        database_id="test_company",
+        inference_mode="Greedy (Pass@1)",
+    )
+    assert res.format_valid is True
+    assert res.ast_safe is False
+    assert res.ast_error_code == "DISALLOWED_OPERATION"
+    assert res.execution_result is None
+    assert res.rows == []
+
+
+def test_majority8_clustering_and_single_execution():
+    candidates = [
+        "<sql>SELECT name FROM employee</sql>",
+        "<sql>SELECT name FROM employee ORDER BY emp_id</sql>",
+        "<sql>SELECT name FROM employee WHERE salary > 0</sql>",
+        "<sql>SELECT name FROM employee WHERE emp_id >= 100</sql>",
+        "<sql>SELECT name FROM employee LIMIT 10</sql>",
+        "<sql>SELECT name FROM department</sql>",
+        "<sql>SELECT name FROM department LIMIT 2</sql>",
+        "<sql>DROP TABLE employee</sql>",
+    ]
+    gen, _ = _make_generator({8: candidates})
+    res = gen.execute_and_evaluate(
         question="list employee name",
         database_id="test_company",
-        model_choice="SFT + GRPO (RLVR)",
         inference_mode="Majority@8 (Self-Consistency)",
     )
-    assert r_maj8.voting_outcome is not None
-    assert r_maj8.voting_outcome.total_candidates == 8
-    assert r_maj8.voting_outcome.cluster_size >= 4
-    assert len(r_maj8.candidates) == 8
+    assert res.voting_outcome is not None
+    assert res.voting_outcome.is_abstained is False
+    assert res.voting_outcome.total_candidates == 8
+    assert res.voting_outcome.num_safe == 7
+    assert res.voting_outcome.num_executed == 7
+    assert res.voting_outcome.cluster_size == 5
+    assert res.selected_sql == "SELECT name FROM employee"
+    assert len(res.candidates) == 8
+    assert [c.cluster_id for c in res.candidates] == [1, 1, 1, 1, 1, 2, 3, None]
 
 
-def test_active_model_change_reward_telemetry(generator):
-    # Zero-shot does not produce GRPO composite reward breakdown
-    r_zs = generator.execute_and_evaluate(
+def test_majority8_tie_and_all_failed_abstention():
+    # Tie: 3 vs 3
+    tie_candidates = (
+        ["<sql>SELECT name FROM employee</sql>"] * 3
+        + ["<sql>SELECT name FROM department</sql>"] * 3
+        + ["bad output"] * 2
+    )
+    gen_tie, _ = _make_generator({8: tie_candidates})
+    res_tie = gen_tie.execute_and_evaluate(
+        question="list names",
+        database_id="test_company",
+        inference_mode="Majority@8 (Self-Consistency)",
+    )
+    assert res_tie.voting_outcome is not None
+    assert res_tie.voting_outcome.is_abstained is True
+    assert res_tie.voting_outcome.abstention_reason == "NO_CONSENSUS_TIE"
+
+    # All failed: no fallback SQL leaked
+    bad_candidates = ["<sql>DROP TABLE employee</sql>"] * 4 + ["no tags"] * 4
+    gen_bad, _ = _make_generator({8: bad_candidates})
+    res_bad = gen_bad.execute_and_evaluate(
+        question="list names",
+        database_id="test_company",
+        inference_mode="Majority@8 (Self-Consistency)",
+    )
+    assert res_bad.voting_outcome is not None
+    assert res_bad.voting_outcome.is_abstained is True
+    assert res_bad.voting_outcome.abstention_reason == "ALL_CANDIDATES_FAILED_OR_UNSAFE"
+    assert res_bad.selected_sql is None
+
+
+def test_execute_false_skips_sandbox_execution():
+    gen, _ = _make_generator({1: ["<sql>SELECT name FROM employee</sql>"]})
+    res = gen.execute_and_evaluate(
         question="list employee name",
         database_id="test_company",
-        model_choice="Qwen2.5-Coder-1.5B (Zero-Shot)",
         inference_mode="Greedy (Pass@1)",
+        execute=False,
     )
-    assert r_zs.rewards is None
-
-    # GRPO produces verifiable composite reward breakdown
-    r_grpo = generator.execute_and_evaluate(
-        question="list employee name",
-        database_id="test_company",
-        model_choice="SFT + GRPO (RLVR)",
-        inference_mode="Greedy (Pass@1)",
-    )
-    assert r_grpo.rewards is not None
-    assert r_grpo.rewards.r_fmt == 0.20
-    assert r_grpo.rewards.r_ast == 0.20
-    assert r_grpo.rewards.r_exec_valid == 0.30
-    assert r_grpo.rewards.r_total >= 1.0
-
-
-def test_table_extraction_correctness(generator):
-    # car_makers in car_1 (must NOT extract continents)
-    r_maker = generator.execute_and_evaluate(
-        question="What are the names of all car makers?",
-        database_id="car_1",
-    )
-    assert "car_makers" in r_maker.selected_sql.lower()
-    assert "continents" not in r_maker.selected_sql.lower()
-    assert len(r_maker.rows) == 22
-
-    # publication in academic (must NOT extract author)
-    r_paper = generator.execute_and_evaluate(
-        question="How many papers are there?",
-        database_id="academic",
-    )
-    assert "publication" in r_paper.selected_sql.lower()
-    assert "author" not in r_paper.selected_sql.lower()
-
-
-def test_top_5_budget_limit(generator):
-    # top 5 budget must include LIMIT 5 and DESC ordering
-    r_top = generator.execute_and_evaluate(
-        question="list top 5 budget",
-        database_id="test_company",
-    )
-    assert "limit 5" in r_top.selected_sql.lower()
-    assert "desc" in r_top.selected_sql.lower()
-    assert len(r_top.rows) == 3  # department has 3 records total
-    assert r_top.rows[0][0] == 500000.0 or r_top.rows[0][-1] == 500000.0
-
-
-def test_projection_precision(generator):
-    # List all employee name with a salary greater than 2000.
-    # Must only project name, not unrequested salary
-    r = generator.execute_and_evaluate(
-        question="List all employee name with a salary greater than 2000.",
-        database_id="test_company",
-    )
-    assert "name" in r.columns
-    assert "salary" not in r.columns
-    assert len(r.rows) == 5
+    assert res.format_valid is True
+    assert res.ast_safe is True
+    assert res.selected_sql == "SELECT name FROM employee"
+    assert res.execution_result is None
+    assert res.execution_latency_ms == 0.0

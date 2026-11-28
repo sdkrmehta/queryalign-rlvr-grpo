@@ -34,7 +34,13 @@ _MAX_CONCURRENT_INFERENCE = max(1, int(os.getenv("MAX_CONCURRENT_INFERENCE", "2"
 _INFERENCE_SEMAPHORE = threading.Semaphore(_MAX_CONCURRENT_INFERENCE)
 
 registry = DatabaseRegistry()
-sandbox = SQLiteSandbox()
+sandbox = SQLiteSandbox(
+    row_limit=5000,
+    byte_limit=1_048_576,
+    timeout_seconds=2.5,
+    isolate_process=True,
+    hard_timeout_seconds=4.0,
+)
 serializer = SchemaSerializer()
 generator = SQLGenerator(registry=registry, sandbox=sandbox)
 

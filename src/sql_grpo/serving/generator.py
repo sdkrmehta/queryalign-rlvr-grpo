@@ -91,12 +91,13 @@ class SQLGenerator:
         self,
         raw_completion: str,
         valid_tables: Set[str],
+        valid_columns: Optional[Dict[str, Set[str]]] = None,
     ) -> Tuple[Optional[str], bool, bool, Optional[str], Optional[str]]:
         parsed = SQLCompletionParser.parse(raw_completion)
         if not parsed.is_valid_format or not parsed.sql:
             return None, False, False, parsed.error_code, "Completion missing valid <sql>...</sql> block"
 
-        checker = ASTPolicyChecker(allowed_tables=valid_tables)
+        checker = ASTPolicyChecker(allowed_tables=valid_tables, allowed_columns=valid_columns)
         ast_res = checker.validate(parsed.sql)
         if not ast_res.is_safe:
             return parsed.sql, True, False, ast_res.error_code, ast_res.error_message
@@ -118,6 +119,10 @@ class SQLGenerator:
         db_path = self.registry.get_path(database_id)
         schema_info = self.serializer.serialize_database(db_path)
         valid_tables = set(schema_info["tables"].keys())
+        valid_columns = {
+            tbl: {col["name"] for col in meta.get("columns", [])}
+            for tbl, meta in schema_info.get("tables", {}).items()
+        }
         schema_text = self.serializer.to_compact_text(schema_info)
         prompt_messages = build_chat_prompt(question=question, serialized_schema=schema_text)
 
@@ -155,6 +160,7 @@ class SQLGenerator:
                 db_path=db_path,
                 database_id=database_id,
                 valid_tables=valid_tables,
+                valid_columns=valid_columns,
             )
             vote_total_ms = (time.perf_counter() - t_vote) * 1000.0
             exec_ms = sum(
@@ -202,7 +208,9 @@ class SQLGenerator:
             # Preview-only mode: parse and AST-validate candidates without executing in SQLite
             t_val = time.perf_counter()
             for idx, comp in enumerate(completions, start=1):
-                sql, f_ok, a_ok, err_code, _ = self._validate_single_completion(comp, valid_tables)
+                sql, f_ok, a_ok, err_code, _ = self._validate_single_completion(
+                    comp, valid_tables, valid_columns=valid_columns
+                )
                 candidate_results.append(
                     CandidateResult(
                         index=idx,
@@ -232,7 +240,9 @@ class SQLGenerator:
         else:
             t_val = time.perf_counter()
             selected_sql, format_valid, ast_safe, ast_error_code, ast_error_message = (
-                self._validate_single_completion(raw_completion, valid_tables)
+                self._validate_single_completion(
+                    raw_completion, valid_tables, valid_columns=valid_columns
+                )
             )
             val_ms = (time.perf_counter() - t_val) * 1000.0
 
@@ -242,6 +252,7 @@ class SQLGenerator:
                     database_id=database_id,
                     sql=selected_sql,
                     allowed_tables=valid_tables,
+                    allowed_columns=valid_columns,
                 )
                 exec_ms = exec_res.latency_ms
                 if exec_res.success and exec_res.rows is not None:

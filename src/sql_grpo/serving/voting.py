@@ -56,6 +56,7 @@ class MajorityVotingEngine:
         db_path: Path,
         database_id: str,
         valid_tables: Optional[Set[str]] = None,
+        valid_columns: Optional[Dict[str, Set[str]]] = None,
     ) -> VotingOutcome:
         total_candidates = len(candidate_completions)
         if total_candidates == 0:
@@ -70,7 +71,7 @@ class MajorityVotingEngine:
                 abstention_reason="ALL_CANDIDATES_FAILED_OR_UNSAFE",
             )
 
-        checker = ASTPolicyChecker(allowed_tables=valid_tables)
+        checker = ASTPolicyChecker(allowed_tables=valid_tables, allowed_columns=valid_columns)
         evaluations: List[CandidateEvaluation] = []
         clusters: Dict[Tuple[Any, ...], List[Tuple[CandidateEvaluation, ExecutionResult]]] = defaultdict(list)
         safe_count = 0
@@ -111,6 +112,7 @@ class MajorityVotingEngine:
                 database_id=database_id,
                 sql=parsed.sql,
                 allowed_tables=valid_tables,
+                allowed_columns=valid_columns,
             )
 
             exec_ok = exec_res.success and exec_res.complete and not exec_res.truncated
